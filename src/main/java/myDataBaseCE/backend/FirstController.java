@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FirstController {
@@ -41,7 +42,11 @@ public class FirstController {
         Gson gson = new Gson();
         User test = gson.fromJson(new FileReader(path), User.class);
         System.out.println(test.getUserName());
-
     }
-
+    @PostMapping("/testThree")
+    public void testing(){
+        XMLStore xmlStore = new XMLStore();
+        String[] jeje= {"Hola","Siu"};
+        xmlStore.select("LeoGod", jeje, "Siu", "digo",jeje);
+    }
 }
