@@ -91,8 +91,8 @@ public class XMLStore {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource domSource = new DOMSource(document);
-            new File("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name).mkdirs();
-            StreamResult streamResult = new StreamResult(new File("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name + "/" + name + ".xml"));
+            new File(".\\XMLFolder\\" + name).mkdirs();
+            StreamResult streamResult = new StreamResult(new File(".\\XMLFolder\\" + name + "\\" + name + ".xml"));
 
 
             // If you use
