@@ -56,8 +56,8 @@ public class FirstController {
     }
 
     @PostMapping("/sendCommit")
-    public void sendCommit(@RequestBody string arroz){
-        println(arroz);
+    public void sendCommit(@RequestBody Container arroz){
+        System.out.println(arroz.getData());
     }
 
 
