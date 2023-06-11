@@ -58,9 +58,9 @@ public class FirstController {
 
 
     @RequestMapping("/get-tables")
-    public String[] getTables() {
-        String[] wordsList = {"hay", "pene"};
-        return wordsList;
+    public List<String> getTables() {
+        XMLStore xmlStore = new XMLStore();
+        return xmlStore.findFoldersInDirectory();
     }
 
     @PostMapping("/sendCommit")
@@ -108,6 +108,7 @@ public class FirstController {
                 xmlStore.select(function[1], newAttributes, function[3], function[4], jeje);
             }
         }
+    }
 
 
 }
