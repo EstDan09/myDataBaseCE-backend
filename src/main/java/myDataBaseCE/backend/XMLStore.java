@@ -1,5 +1,9 @@
+
+package myDataBaseCE.backend;
+
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -38,7 +42,7 @@ public class XMLStore {
     }
 
     public void createXML(String name, String[] attributes) {
-
+        numRows =0;
         try {
             DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
@@ -52,54 +56,12 @@ public class XMLStore {
                 numColums++;
 
             }
-            // root element
-            /*
-
-            // employee element
-            Element employee = document.createElement("employee");
-
-            root.appendChild(employee);
-
-            // set an attribute to staff element
-            Attr attr = document.createAttribute("id");
-            attr.setValue("10");
-            employee.setAttributeNode(attr);
-
-            //you can also use staff.setAttribute("id", "1") for this
-
-            // firstname element
-
-            employee.appendChild(firstName);
-
-            // lastname element
-            Element lastname = document.createElement("lastname");
-            lastname.appendChild(document.createTextNode("Harley"));
-            employee.appendChild(lastname);
-
-            // email element
-            Element email = document.createElement("email");
-            email.appendChild(document.createTextNode("james@example.org"));
-            employee.appendChild(email);
-
-            // department elements
-            Element department = document.createElement("department");
-            department.appendChild(document.createTextNode("Human Resources"));
-            employee.appendChild(department);
-            */
-            // create the xml file
-            //transform the DOM Object to an XML File
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource domSource = new DOMSource(document);
-            new File(".\\XMLFolder\\" + name).mkdirs();
-            StreamResult streamResult = new StreamResult(new File(".\\XMLFolder\\" + name + "\\" + name + ".xml"));
-
-
-            // If you use
-            // StreamResult result = new StreamResult(System.out);
-            // the output will be pushed to the standard output ...
-            // You can use that for debugging
-
+            new File(".//XMLFolder//" + name).mkdirs();
+            //new File("/home/dadu/Documents/GitHub/myDataBaseCE-backend/XMLFolder/"+name).mkdirs();
+            StreamResult streamResult = new StreamResult(new File(".//XMLFolder//" + name + "//" + name + ".xml"));
             transformer.transform(domSource, streamResult);
 
 
@@ -111,28 +73,32 @@ public class XMLStore {
     void insert(String name, String[] newValues) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 
-        try (InputStream is = new FileInputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name + "/" + name + ".xml")) {
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
             DocumentBuilder db = documentFactory.newDocumentBuilder();
 
             Document document = db.parse(is);
 
             NodeList xml = document.getElementsByTagName(name);
             NodeList attributes = xml.item(0).getChildNodes();
-
-            for (int i = 0; i < attributes.getLength(); i++) {
-                Node attribute = attributes.item(i);
+            System.out.println(attributes.getLength());
+            System.out.println(newValues.length);
+            int counter = 0;
+            for (int v = 0; v < attributes.getLength() && counter < newValues.length; v++) {
+                Node attribute = attributes.item(v);
                 if (attribute.getNodeType() == Node.ELEMENT_NODE) {
-
+                    System.out.println("Lets see");
                     Element nData = document.createElement("X" + numRows);
 
-                    nData.appendChild(document.createTextNode(newValues[i]));
+                    nData.appendChild(document.createTextNode(newValues[counter]));
 
                     attribute.appendChild(nData);
+
+                    counter++;
 
                 }
             }
             try (FileOutputStream output =
-                         new FileOutputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name + "/" + name + ".xml")) {
+                         new FileOutputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
                 DOMSource source = new DOMSource(document);
@@ -161,8 +127,8 @@ public class XMLStore {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource domSource = new DOMSource(document);
-            new File("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name).mkdirs();
-            StreamResult streamResult = new StreamResult(new File("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name + "/" + name + ".xml"));
+            new File(".//XMLFolder//" + name).mkdirs();
+            StreamResult streamResult = new StreamResult(new File(".//XMLFolder//" + name + "//" + name + ".xml"));
             transformer.transform(domSource, streamResult);
         } catch (ParserConfigurationException | TransformerException pce) {
             pce.printStackTrace();
@@ -172,7 +138,7 @@ public class XMLStore {
     public String searchID(String name, String Colum, String value) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         String id = "";
-        try (InputStream is = new FileInputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name + "/" + name + ".xml")) {
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
             DocumentBuilder db = documentFactory.newDocumentBuilder();
 
             Document document = db.parse(is);
@@ -207,7 +173,7 @@ public class XMLStore {
     public void delete(String name, String Colum, String value) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         String id = searchID(name, Colum, value);
-        try (InputStream is = new FileInputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name + "/" + name + ".xml")) {
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
             DocumentBuilder db = documentFactory.newDocumentBuilder();
 
             Document document = db.parse(is);
@@ -229,7 +195,7 @@ public class XMLStore {
                 }
             }
             try (FileOutputStream output =
-                         new FileOutputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name + "/" + name + ".xml")) {
+                         new FileOutputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
                 DOMSource source = new DOMSource(document);
@@ -248,7 +214,7 @@ public class XMLStore {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         String id = searchID(name, Colum, value);
         int counter = 0;
-        try (InputStream is = new FileInputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name + "/" + name + ".xml")) {
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
             DocumentBuilder db = documentFactory.newDocumentBuilder();
 
             Document document = db.parse(is);
@@ -283,7 +249,7 @@ public class XMLStore {
                 }
             }
             try (FileOutputStream output =
-                         new FileOutputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + name + "/" + name + ".xml")) {
+                         new FileOutputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
                 DOMSource source = new DOMSource(document);
@@ -298,7 +264,7 @@ public class XMLStore {
         }
     }
 
-    public void innerJoin(String[] attributes, String initialT, String secondT, String attribute1, String attribute2, String[] conditionals) {
+    public void innerJoin(String initialT, String secondT, String attribute1, String attribute2,String[] attributes, String[] conditionals) {
         try {
             //ArrayList<ArrayList<String>> nRows;
             System.out.println(getComAttJ(initialT, secondT, attribute1, attribute2));
@@ -306,7 +272,7 @@ public class XMLStore {
             if (equalsJ(getComAttJ(initialT, secondT, attribute1, attribute2))) {
                 //nRows = extractRowsJ(attributtes);
                 //System.out.println(nRows);
-                numRows=0;
+                numRows = 0;
                 createTemporalJ(attributes, extractRowsJ(attributes));
             }
         } catch (ParserConfigurationException | TransformerException e) {
@@ -319,7 +285,7 @@ public class XMLStore {
         ArrayList<String> array = new ArrayList<>();
 
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        try (InputStream is = new FileInputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + initialT + "/" + initialT + ".xml")) {
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + initialT + "//" + initialT + ".xml")) {
 
             DocumentBuilder db = documentFactory.newDocumentBuilder();
             Document document = db.parse(is);
@@ -348,7 +314,7 @@ public class XMLStore {
             throw new RuntimeException(e);
         }
 
-        try (InputStream is = new FileInputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + secondT + "/" + secondT + ".xml")) {
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + secondT + "//" + secondT + ".xml")) {
             DocumentBuilder db = documentFactory.newDocumentBuilder();
             Document document = db.parse(is);
             NodeList xml = document.getElementsByTagName(secondT);
@@ -401,7 +367,7 @@ public class XMLStore {
             System.out.println("Entré");
             String[] oldAttribute = oldAttributes[i].split("\\.");
             maze.add(new ArrayList<>());
-            try (InputStream is = new FileInputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + oldAttribute[0] + "/" + oldAttribute[0] + ".xml")) {
+            try (InputStream is = new FileInputStream(".//XMLFolder//" + oldAttribute[0] + "//" + oldAttribute[0] + ".xml")) {
                 DocumentBuilder db = documentFactory.newDocumentBuilder();
                 Document document = db.parse(is);
                 NodeList xml = document.getElementsByTagName(oldAttribute[0]);
@@ -427,75 +393,69 @@ public class XMLStore {
         }
         return maze;
     }
+
     public void createTemporalJ(String[] attributes, ArrayList<ArrayList<String>> maze) throws TransformerException, ParserConfigurationException {
 
-        try{
-        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-        Document document = documentBuilder.newDocument();
-        Element root = document.createElement("TemporalTable");
-        document.appendChild(root);
-        for (int i = 0; i<attributes.length; i++) {
-            String[] attribute = attributes[i].split("\\.");
-            Element newCol = document.createElement(attribute[1]);
-            root.appendChild(newCol);
+        try {
+            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+            Document document = documentBuilder.newDocument();
+            Element root = document.createElement("TemporalTable");
+            document.appendChild(root);
+            for (int i = 0; i < attributes.length; i++) {
+                String[] attribute = attributes[i].split("\\.");
+                Element newCol = document.createElement(attribute[1]);
+                root.appendChild(newCol);
 
-            for(int j = 0; j<maze.get(0).size();j++){
-                Element nData = document.createElement("X" + numRows);
+                for (int j = 0; j < maze.get(0).size(); j++) {
+                    Element nData = document.createElement("X" + numRows);
 
-                nData.appendChild(document.createTextNode(maze.get(i).get(j)));
+                    nData.appendChild(document.createTextNode(maze.get(i).get(j)));
 
-                newCol.appendChild(nData);
+                    newCol.appendChild(nData);
 
-                numRows++;
+                    numRows++;
+                }
+                numRows = 0;
             }
-            numRows=0;
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource domSource = new DOMSource(document);
+            new File(".//XMLFolder//TemporalTable").mkdirs();
+            StreamResult streamResult = new StreamResult(new File(".//XMLFolder//TemporalTable//TemporalTable.xml"));
+
+            transformer.transform(domSource, streamResult);
+        } catch (ParserConfigurationException | TransformerException pce) {
+            pce.printStackTrace();
         }
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        DOMSource domSource = new DOMSource(document);
-        new File("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/TemporalTable").mkdirs();
-        StreamResult streamResult = new StreamResult(new File("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/TemporalTable/TemporalTable.xml"));
-
-        transformer.transform(domSource, streamResult);
-    } catch (ParserConfigurationException | TransformerException pce) {
-        pce.printStackTrace();
-    }
     }
 
-    public void select(String nombre, String[]attributes, String attributeC, String rowC, String[] conditionals ){
-
+    public void select(String name, String[] attributes, String attributeC, String rowC, String[] conditionals) {
+        numRows = 0;
+        createTemporalTS(getMazeS(name, attributes, collectRowsS(name, attributeC, rowC)));
     }
-    public ArrayList<ArrayList<String>> collectRows(String nombre,String attributeC, String rowC) {
-        ArrayList<ArrayList<String>> maze = new ArrayList<>();
+
+    public ArrayList<String> collectRowsS(String name, String attributeC, String rowC) {
+        ArrayList<String> maze = new ArrayList<>();
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        int counter = 0;
-        try (InputStream is = new FileInputStream("/home/dadu/IdeaProjects/AdelantoProyecto/XMLFolder/" + nombre + "/" + nombre + ".xml")) {
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
             DocumentBuilder db = documentFactory.newDocumentBuilder();
             Document document = db.parse(is);
-            NodeList xml = document.getElementsByTagName(nombre);
+            NodeList xml = document.getElementsByTagName(name);
             NodeList attributes = xml.item(0).getChildNodes();
             for (int j = 0; j < attributes.getLength(); j++) {
                 Node attribute = attributes.item(j);
                 if (attribute.getNodeType() == Node.ELEMENT_NODE) {
                     if (attribute.getNodeName().equals(attributeC)) {
-                        maze.add(new ArrayList<>());
                         NodeList rows = attribute.getChildNodes();
-                        boolean verify = false;
                         for (int z = 0; z < rows.getLength(); z++) {
                             Node row = rows.item(z);
                             if (row.getNodeType() == Node.ELEMENT_NODE) {
-                                if (row.getTextContent() == rowC) {
-                                    maze.get(counter).add(row.getNodeName());
-                                    verify = true;
+                                if (Objects.equals(row.getTextContent(), rowC)) {
+                                    maze.add(row.getNodeName());
+
                                 }
                             }
-                        }
-                        if(verify){
-                            counter++;
-                        }
-                        else{
-                            maze.remove(counter);
                         }
                     }
                 }
@@ -506,7 +466,119 @@ public class XMLStore {
         return maze;
     }
 
+    public ArrayList<ArrayList<String>> getMazeS(String name, String[] oldAttributes, ArrayList<String> oldRows) {
+        ArrayList<ArrayList<String>> maze = new ArrayList<>();
+        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+        for (int i = 0; i < oldAttributes.length; i++) {
+            try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
+                DocumentBuilder db = documentFactory.newDocumentBuilder();
+                Document document = db.parse(is);
+                NodeList xml = document.getElementsByTagName(name);
+                NodeList attributes = xml.item(0).getChildNodes();
+                for (int j = 0; j < attributes.getLength(); j++) {
+                    Node attribute = attributes.item(j);
+                    if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                        if (attribute.getNodeName().equals(oldAttributes[i])) {
+                            NodeList rows = attribute.getChildNodes();
+                            maze.add(new ArrayList<>());
+                            maze.get(i).add(attribute.getNodeName());
+                            for (int z = 0; z < rows.getLength(); z++) {
+                                Node row = rows.item(z);
+                                if (row.getNodeType() == Node.ELEMENT_NODE) {
+                                    for (int y = 0; y < oldRows.size(); y++) {
+                                        if (row.getNodeName().equals(oldRows.get(y))) {
+                                            maze.get(i).add(row.getTextContent());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (IOException | ParserConfigurationException | SAXException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return maze;
+    }
 
+    public void createTemporalTS(ArrayList<ArrayList<String>> maze) {
+        try {
+            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+            Document document = documentBuilder.newDocument();
+            Element root = document.createElement("TemporalTable");
+            document.appendChild(root);
+            for (int i = 0; i < maze.size(); i++) {
+                Element newCol = document.createElement(maze.get(i).get(0));
+                root.appendChild(newCol);
 
+                for (int j = 1; j < maze.get(0).size(); j++) {
+                    Element nData = document.createElement("X" + numRows);
 
+                    nData.appendChild(document.createTextNode(maze.get(i).get(j)));
+
+                    newCol.appendChild(nData);
+
+                    numRows++;
+                }
+                numRows = 0;
+            }
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource domSource = new DOMSource(document);
+            new File(".//XMLFolder//TemporalTable").mkdirs();
+            StreamResult streamResult = new StreamResult(new File(".//XMLFolder//TemporalTable//TemporalTable.xml"));
+
+            transformer.transform(domSource, streamResult);
+        } catch (ParserConfigurationException | TransformerException pce) {
+            pce.printStackTrace();
+        }
+    }
+
+    public List<String> findFoldersInDirectory() {
+        File directory = new File(".//XMLFolder//");
+
+        FileFilter directoryFileFilter = new FileFilter() {
+            public boolean accept(File file) {
+                return file.isDirectory();
+            }
+        };
+
+        File[] directoryListAsFile = directory.listFiles(directoryFileFilter);
+        List<String> foldersInDirectory = new ArrayList<String>(directoryListAsFile.length);
+        for (File directoryAsFile : directoryListAsFile) {
+            foldersInDirectory.add(directoryAsFile.getName());
+        }
+
+        return foldersInDirectory;
+    }
+
+    public void countRows(String name) {
+        numRows = 0;
+        ArrayList<ArrayList<String>> maze = new ArrayList<>();
+        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
+            DocumentBuilder db = documentFactory.newDocumentBuilder();
+            Document document = db.parse(is);
+            NodeList xml = document.getElementsByTagName(name);
+            NodeList attributes = xml.item(0).getChildNodes();
+            for (int j = 0; j < attributes.getLength(); j++) {
+                Node attribute = attributes.item(j);
+                if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                    NodeList rows = attribute.getChildNodes();
+                    for (int z = 0; z < rows.getLength(); z++) {
+                        Node row = rows.item(z);
+                        if (row.getNodeType() == Node.ELEMENT_NODE) {
+                            numRows++;
+                        }
+                    }
+                    break;
+                }
+            }
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
