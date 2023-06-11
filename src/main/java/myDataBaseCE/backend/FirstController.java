@@ -18,7 +18,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FirstController {
 
-    @RequestMapping("/testOne")
+    @RequestMapping("/get-user")
     public User testOne() {
         User example = new User();
         example.setUserName("Juan");
@@ -27,7 +27,7 @@ public class FirstController {
         return example;
     }
 
-    @PostMapping("/testTwo")
+    @PostMapping("/create-user")
     public void createUser(@RequestBody User exampleBoy) throws IOException {
         System.out.println(exampleBoy.getPassword());
 
@@ -55,9 +55,17 @@ public class FirstController {
         return wordsList;
     }
 
-    @PostMapping("/sendCommit")
+    @PostMapping("/send-commit")
     public void sendCommit(@RequestBody Container arroz) throws IOException{
         System.out.println(arroz.getData());
+    }
+
+    @RequestMapping("/get-xml")
+    public String[][] getXmls() {
+        String[][] arn = {{"hen", "hon", "wer"}, {"hol", "art", "erw"}, {"dad", "ddd", "wep"} };
+
+        return arn;
+
     }
 
 }
