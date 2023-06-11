@@ -23,7 +23,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FirstController {
 
-    @RequestMapping("/testOne")
+    @RequestMapping("/get-user")
     public User testOne() {
         User example = new User();
         example.setUserName("Juan");
@@ -32,7 +32,7 @@ public class FirstController {
         return example;
     }
 
-    @PostMapping("/testTwo")
+    @PostMapping("/create-user")
     public void createUser(@RequestBody User exampleBoy) throws IOException {
         System.out.println(exampleBoy.getPassword());
 
@@ -63,10 +63,10 @@ public class FirstController {
         return xmlStore.findFoldersInDirectory();
     }
 
-    @PostMapping("/sendCommit")
 
-    public void sendCommit(@RequestBody String arroz){
-        System.out.println(arroz);
+    @PostMapping("/send-commit")
+    public void sendCommit(@RequestBody Container arroz) throws IOException{
+        System.out.println(arroz.getData());
     }
     @GetMapping("/get_xml_Data")
     public ArrayList<ArrayList<String>>testing(@RequestParam String xmlName) {
@@ -119,6 +119,14 @@ public class FirstController {
         String[] conditionals= {"||"};
 
         xmlStore.innerJoin("LeoGodness","LeoGod", attribute1, attribute2,attributes,conditionals);
+
+    }
+
+    @RequestMapping("/get-xml")
+    public String[][] getXmls() {
+        String[][] arn = {{"hen", "hon", "wer"}, {"hol", "art", "erw"}, {"dad", "ddd", "wep"} };
+
+        return arn;
 
     }
 
