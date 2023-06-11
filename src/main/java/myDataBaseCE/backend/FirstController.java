@@ -64,6 +64,7 @@ public class FirstController {
     }
 
     @PostMapping("/sendCommit")
+
     public void sendCommit(@RequestBody String arroz){
         System.out.println("arroz");
     }
@@ -106,6 +107,6 @@ public class FirstController {
                 xmlStore.select(function[1], newAttributes, function[3], function[4], jeje);
             }
         }
-    }
+
 
 }
