@@ -60,10 +60,10 @@ public class FirstController {
         return xmlStore.findFoldersInDirectory();
     }
 
-    @PostMapping("/sendCommit")
 
-    public void sendCommit(@RequestBody String arroz){
-        System.out.println(arroz);
+    @PostMapping("/send-commit")
+    public void sendCommit(@RequestBody Container arroz) throws IOException{
+        System.out.println(arroz.getData());
     }
 
     @GetMapping("/get_xml_Data")
@@ -119,6 +119,14 @@ public class FirstController {
         String[] conditionals= {"||"};
 
         xmlStore.innerJoin("LeoGodness","LeoGod", attribute1, attribute2,attributes,conditionals);
+
+    }
+
+    @RequestMapping("/get-xml")
+    public String[][] getXmls() {
+        String[][] arn = {{"hen", "hon", "wer"}, {"hol", "art", "erw"}, {"dad", "ddd", "wep"} };
+
+        return arn;
 
     }
 
