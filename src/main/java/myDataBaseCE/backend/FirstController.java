@@ -23,7 +23,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FirstController {
 
-    @RequestMapping("/testOne")
+    @RequestMapping("/get-user")
     public User testOne() {
         User example = new User();
         example.setUserName("Juan");
@@ -32,7 +32,7 @@ public class FirstController {
         return example;
     }
 
-    @PostMapping("/testTwo")
+    @PostMapping("/create-user")
     public void createUser(@RequestBody User exampleBoy) throws IOException {
         System.out.println(exampleBoy.getPassword());
 
@@ -54,9 +54,6 @@ public class FirstController {
 //        System.out.println(userListTest.get(0).getUserName());
     }
 
-
-
-
     @RequestMapping("/get-tables")
     public List<String> getTables() {
         XMLStore xmlStore = new XMLStore();
@@ -68,12 +65,14 @@ public class FirstController {
     public void sendCommit(@RequestBody String arroz){
         System.out.println(arroz);
     }
+
     @GetMapping("/get_xml_Data")
     public ArrayList<ArrayList<String>>testing(@RequestParam String xmlName) {
         XMLStore xmlStore = new XMLStore();
         return xmlStore.sendTable(xmlName);
 
     }
+
     @PostMapping("/strip")
     public void Strip (@RequestBody Container container) {
         XMLStore xmlStore = new XMLStore();
@@ -110,6 +109,7 @@ public class FirstController {
                 }
         }
     }
+
     @PostMapping("/testFour")
     public void testing2() {
         XMLStore xmlStore = new XMLStore();

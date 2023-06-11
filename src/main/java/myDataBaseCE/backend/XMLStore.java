@@ -34,6 +34,11 @@ public class XMLStore {
         this.next = next;
     }
 
+    /**
+     * Función para crear un nuevo XML
+     * @param name nombre del XML
+     * @param attributes columnas del XML
+     */
     public void createXML(String name, String[] attributes) {
         numRows =0;
         try {
@@ -62,6 +67,11 @@ public class XMLStore {
         }
     }
 
+    /**
+     * Función para insertar datos a un XML
+     * @param name name nombre del XML que voy a modificar
+     * @param newValues nuevos valores que voy a agregar
+     */
     void insert(String name, String[] newValues) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 
@@ -104,6 +114,10 @@ public class XMLStore {
         }
     }
 
+    /**
+     * Función para eliminar todo un XML
+     * @param name nombre del XML
+     */
     public void deleteSupreme(String name) {
         try {
 
@@ -125,6 +139,13 @@ public class XMLStore {
         }
     }
 
+    /**
+     * Función para buscar el valor a eliminar de un XML
+     * @param name nombre del XML
+     * @param Colum columna del xml
+     * @param value valor a eliminar
+     * @return id ubicación de lo que se desea eliminar
+     */
     public String searchID(String name, String Colum, String value) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         String id = "";
@@ -160,6 +181,12 @@ public class XMLStore {
         }
     }
 
+    /**
+     * Función para eliminar um dato de un XML
+     * @param name nombre del XML
+     * @param Colum columna del xml
+     * @param value valor a eliminar
+     */
     public void delete(String name, String Colum, String value) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         String id = searchID(name, Colum, value);
@@ -200,6 +227,14 @@ public class XMLStore {
         }
     }
 
+    /**
+     * Función para buscar las columnas a eliminar de un XML
+     * @param name nombre del XML
+     * @param Colum columna del xml
+     * @param value valor a eliminar
+     * @param columns
+     * @param newValues
+     */
     public void update(String name, String Colum, String value, String[] columns, String[] newValues) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         String id = searchID(name, Colum, value);
@@ -254,6 +289,14 @@ public class XMLStore {
         }
     }
 
+    /**
+     * Función
+     * @param initialT
+     * @param secondT
+     * @param attribute1
+     * @param attribute2
+     * @param attributes
+     */
     public void innerJoin(String initialT, String secondT, String[] attribute1, String[] attribute2,String[] attributes, String[] conditionals) {
         try {
             //ArrayList<ArrayList<String>> nRows;
@@ -267,6 +310,16 @@ public class XMLStore {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Función
+     * @param initialT
+     * @param secondT
+     * @param attribute1
+     * @param attribute2
+     * @param conditionals
+     * @return              poner que se devuelve
+     */
     public boolean checkConditionalsJ(String initialT, String secondT, String[] attribute1, String[] attribute2, String[] conditionals){
         if(attribute1.length==1 && attribute2.length==1){
             return equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0]));
@@ -336,6 +389,14 @@ public class XMLStore {
         return false;
     }
 
+    /**
+     * Función
+     * @param initialT
+     * @param secondT
+     * @param attribute1
+     * @param attribute2
+     * @return      poner aqui que devuelve
+     */
     public ArrayList<ArrayList<String>> getComAttJ(String initialT, String secondT, String attribute1, String attribute2) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>(2);
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -400,6 +461,11 @@ public class XMLStore {
 
     }
 
+    /**
+     * Función
+     * @param maze
+     * @return      poner aqui que devuelve
+     */
     public boolean equalsJ(ArrayList<ArrayList<String>> maze) {
 
         if (maze.get(0).size() != maze.get(1).size()) {
@@ -413,6 +479,11 @@ public class XMLStore {
         return true;
     }
 
+    /**
+     * Función
+     * @param oldAttributes
+     * @return      poner aqui que devuelve
+     */
     public ArrayList<ArrayList<String>> extractRowsJ(String[] oldAttributes) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>();
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -447,6 +518,12 @@ public class XMLStore {
         return maze;
     }
 
+    /**
+     * Función
+     * @param attributes
+     * @param maze
+     * @return      poner aqui que devuelve
+     */
     public void createTemporalJ(String[] attributes, ArrayList<ArrayList<String>> maze) throws TransformerException, ParserConfigurationException {
 
         try {
@@ -483,11 +560,25 @@ public class XMLStore {
         }
     }
 
+    /**
+     * Función
+     * @param name
+     * @param attributes
+     * @param attributeC
+     * @param conditionals
+     */
     public void select(String name, String[] attributes, String attributeC, String rowC, String[] conditionals) {
         numRows = 0;
         createTemporalTS(getMazeS(name, attributes, collectRowsS(name, attributeC, rowC)));
     }
 
+    /**
+     * Función
+     * @param name
+     * @param attributeC
+     * @param rowC
+     * @return maze     poner aqui que devuelve
+     */
     public ArrayList<String> collectRowsS(String name, String attributeC, String rowC) {
         ArrayList<String> maze = new ArrayList<>();
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -519,6 +610,13 @@ public class XMLStore {
         return maze;
     }
 
+    /**
+     * Función
+     * @param name
+     * @param oldAttributes
+     * @param oldRows
+     * @return maze     poner aqui que devuelve
+     */
     public ArrayList<ArrayList<String>> getMazeS(String name, String[] oldAttributes, ArrayList<String> oldRows) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>();
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -555,6 +653,10 @@ public class XMLStore {
         return maze;
     }
 
+    /**
+     * Función para buscar las columnas a eliminar de un XML
+     * @param maze
+     */
     public void createTemporalTS(ArrayList<ArrayList<String>> maze) {
         try {
             DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -589,6 +691,10 @@ public class XMLStore {
         }
     }
 
+    /**
+     * Función
+     * @return foldersInDirectory  poner aqui que devuelve
+     */
     public List<String> findFoldersInDirectory() {
         File directory = new File(".//XMLFolder//");
 
@@ -607,6 +713,10 @@ public class XMLStore {
         return foldersInDirectory;
     }
 
+    /**
+     * Función para contar columnas
+     * @param name
+     */
     public void countRows(String name) {
         numRows = 0;
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -634,6 +744,11 @@ public class XMLStore {
 
     }
 
+    /**
+     * Función para buscar las columnas a eliminar de un XML
+     * @param name
+     * @return maze poner aqui que devuelve
+     */
     public ArrayList<ArrayList<String>> sendTable(String name){
         ArrayList<ArrayList<String>> maze = new ArrayList<>();
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
