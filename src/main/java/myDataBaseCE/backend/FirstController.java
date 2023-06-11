@@ -69,18 +69,19 @@ public class FirstController {
         System.out.println("arroz");
     }
     @RequestMapping("/testThree")
-    public void testing() {
+    public ArrayList<ArrayList<String>>testing() {
         /*
-        XMLStore xmlStore = new XMLStore();
         String[] jeje = {"Esteban","88888888","AAA"};
         xmlStore.countRows("LeoGod");
         xmlStore.insert("LeoGod",jeje);
-
-         */
         String ay = "Hola"+"\n"+"pepe";
         System.out.println(ay);
         String[] siu = ay.split("\n");
         System.out.println(siu[0]);
+         */
+        XMLStore xmlStore = new XMLStore();
+        return xmlStore.sendTable("LeoGod");
+
     }
     @RequestMapping("/strip")
     public void Strip (String strip) {
