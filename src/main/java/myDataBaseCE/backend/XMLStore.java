@@ -581,4 +581,34 @@ public class XMLStore {
         }
 
     }
+
+    public ArrayList<ArrayList<String>> sendTable(String name){
+        ArrayList<ArrayList<String>> maze = new ArrayList<>();
+        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
+            DocumentBuilder db = documentFactory.newDocumentBuilder();
+            Document document = db.parse(is);
+            NodeList xml = document.getElementsByTagName(name);
+            NodeList attributes = xml.item(0).getChildNodes();
+            int counter = 0;
+            for (int j = 0; j < attributes.getLength(); j++) {
+                Node attribute = attributes.item(j);
+                if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                    maze.add(new ArrayList<>());
+                    maze.get(counter).add(attribute.getNodeName());
+                    NodeList rows = attribute.getChildNodes();
+                    for (int z = 0; z < rows.getLength(); z++) {
+                        Node row = rows.item(z);
+                        if (row.getNodeType() == Node.ELEMENT_NODE) {
+                            maze.get(counter).add(row.getTextContent());
+                        }
+                    }
+                    counter++;
+                }
+            }
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new RuntimeException(e);
+        }
+        return maze;
+    }
 }
