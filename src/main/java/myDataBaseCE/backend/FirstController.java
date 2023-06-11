@@ -2,12 +2,21 @@ package myDataBaseCE.backend;
 
 import com.google.gson.Gson;
 import org.springframework.web.bind.annotation.*;
+import java.lang.reflect.Type;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import java.util.Objects;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+
 
 
 @RestController
@@ -29,20 +38,34 @@ public class FirstController {
 
         String path = "C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\src\\main\\java\\myDataBaseCE\\files\\test.json";
 
-        User[] list;
+        List<User> userList = new ArrayList<>();
+
         try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
+            userList.add(exampleBoy);
+
             Gson gson = new Gson();
-            String jsonString = gson.toJson(exampleBoy);
-            out.append(jsonString);
+            gson.toJson(userList, out);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+//        Type listType = new TypeToken<ArrayList<User>>(){}.getType();
+//        List<User> userListTest = new Gson().fromJson(new FileReader(path), listType);
+//        System.out.println(userListTest.get(0).getUserName());
+    }
 
-        Gson gson = new Gson();
-        User test = gson.fromJson(new FileReader(path), User.class);
-        System.out.println(test.getUserName());
 
+
+
+    @RequestMapping("/get-tables")
+    public String[] getTables() {
+        String[] wordsList = {"hay", "pene"};
+        return wordsList;
+    }
+
+    @PostMapping("/sendCommit")
+    public void sendCommit(@RequestBody String arroz){
+        System.out.println("arroz");
     }
     @RequestMapping("/testThree")
     public void testing() {
