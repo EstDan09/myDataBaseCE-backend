@@ -9,9 +9,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import java.util.Objects;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 
 @RestController
@@ -49,16 +54,61 @@ public class FirstController {
 //        System.out.println(userListTest.get(0).getUserName());
     }
 
+
+
+
     @RequestMapping("/get-tables")
-    public String[] getTables() {
-        String[] wordsList = {"hay", "pene"};
-        return wordsList;
+    public List<String> getTables() {
+        XMLStore xmlStore = new XMLStore();
+        return xmlStore.findFoldersInDirectory();
     }
 
     @PostMapping("/send-commit")
     public void sendCommit(@RequestBody Container arroz) throws IOException{
         System.out.println(arroz.getData());
     }
+    @RequestMapping("/testThree")
+    public ArrayList<ArrayList<String>>testing() {
+        /*
+        String[] jeje = {"Esteban","88888888","AAA"};
+        xmlStore.countRows("LeoGod");
+        xmlStore.insert("LeoGod",jeje);
+        String ay = "Hola"+"\n"+"pepe";
+        System.out.println(ay);
+        String[] siu = ay.split("\n");
+        System.out.println(siu[0]);
+         */
+        XMLStore xmlStore = new XMLStore();
+        return xmlStore.sendTable("LeoGod");
+
+    }
+    @RequestMapping("/strip")
+    public void Strip (String strip) {
+        XMLStore xmlStore = new XMLStore();
+        String[] functions = strip.split("\n");
+        String[] jeje = {"HOla"};
+        for (int i = 0; i < functions.length; i++) {
+            String[] function = functions[i].split("/");
+            if (Objects.equals(function[0], "CreateTable")) {
+                String[] atributos = function[2].split(",");
+                xmlStore.createXML(function[1], atributos);
+            } else if (Objects.equals(function[0], "Insert")) {
+                String[] values = function[2].split(",");
+                xmlStore.insert(function[1], values);
+            } else if (Objects.equals(function[0], "Update")) {
+                String[] newAttributes = function[4].split(",");
+                String[] newRows = function[5].split(",");
+                xmlStore.update(function[1], function[2], function[3], newAttributes, newRows);
+            } else if (Objects.equals(function[0], "InnerJoin")) {
+                String[] newRows = function[5].split(",");
+                xmlStore.innerJoin(function[1], function[2], function[3], function[4], newRows, jeje);
+            } else if (Objects.equals(function[0], "Select")) {
+                String[] newAttributes = function[2].split(",");
+                xmlStore.select(function[1], newAttributes, function[3], function[4], jeje);
+            }
+        }
+    }
+
 
     @RequestMapping("/get-xml")
     public String[][] getXmls() {
