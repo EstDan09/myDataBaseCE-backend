@@ -516,6 +516,7 @@ public class XMLStore {
             }
 
         }
+        System.out.println(maze);
         return maze;
     }
 
