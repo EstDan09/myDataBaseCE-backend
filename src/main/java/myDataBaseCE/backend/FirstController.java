@@ -14,12 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FirstController {
 
-    @RequestMapping("/testOne")
+    @RequestMapping("/get-user")
     public User testOne() {
         User example = new User();
         example.setUserName("Juan");
@@ -28,7 +27,7 @@ public class FirstController {
         return example;
     }
 
-    @PostMapping("/testTwo")
+    @PostMapping("/create-user")
     public void createUser(@RequestBody User exampleBoy) throws IOException {
         System.out.println(exampleBoy.getPassword());
 
@@ -50,23 +49,23 @@ public class FirstController {
 //        System.out.println(userListTest.get(0).getUserName());
     }
 
-
-    @PostMapping("/testThree")
-    public void testing(){
-        XMLStore xmlStore = new XMLStore();
-        String[] jeje= {"Hola","Siu"};
-        xmlStore.select("LeoGod", jeje, "Siu", "digo",jeje);
-    }
-
     @RequestMapping("/get-tables")
     public String[] getTables() {
         String[] wordsList = {"hay", "pene"};
         return wordsList;
     }
 
-    @PostMapping("/sendCommit")
-    public void sendCommit(@RequestBody string arroz){
-        println(arroz);
+    @PostMapping("/send-commit")
+    public void sendCommit(@RequestBody Container arroz) throws IOException{
+        System.out.println(arroz.getData());
+    }
+
+    @RequestMapping("/get-xml")
+    public String[][] getXmls() {
+        String[][] arn = {{"hen", "hon", "wer"}, {"hol", "art", "erw"}, {"dad", "ddd", "wep"} };
+
+        return arn;
+
     }
 
 }

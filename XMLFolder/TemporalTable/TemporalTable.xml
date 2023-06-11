@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <TemporalTable>
     <Hola>
-        <X0>Daniel</X0>
+        <X0>soy</X0>
+        <X1>Daniel</X1>
     </Hola>
-    <Siu>
-        <X0>digo</X0>
-    </Siu>
+    <Nou>
+        <X0>o</X0>
+        <X1>digo</X1>
+    </Nou>
 </TemporalTable>
