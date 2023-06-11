@@ -1,11 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<TemporalTable>
-    <Hola>
-        <X0>soy</X0>
-        <X1>Daniel</X1>
-    </Hola>
-    <Siu>
-        <X0>y</X0>
-        <X1>digo</X1>
-    </Siu>
-</TemporalTable>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TemporalTable><Cedula><X0>234780987</X0><X1>388974699</X1></Cedula><Deuda><X0>5000</X0><X1>12900</X1></Deuda></TemporalTable>
