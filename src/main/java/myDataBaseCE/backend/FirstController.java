@@ -56,9 +56,6 @@ public class FirstController {
 ////        System.out.println(userListTest.get(0).getUserName());
     }
 
-
-
-
     @RequestMapping("/get-tables")
     public List<String> getTables() {
         XMLStore xmlStore = new XMLStore();
@@ -70,6 +67,7 @@ public class FirstController {
     public void sendCommit(@RequestBody Container arroz) throws IOException{
         System.out.println(arroz.getData());
     }
+
     @GetMapping("/get-xml-data")
     public ArrayList<ArrayList<String>>testing(@RequestParam String xmlName) {
         System.out.println(xmlName);
@@ -127,6 +125,7 @@ public class FirstController {
 
         }
     }
+
     @PostMapping("/testFour")
     public void testing2() {
         XMLStore xmlStore = new XMLStore();
