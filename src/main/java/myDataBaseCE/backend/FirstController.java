@@ -24,34 +24,36 @@ import java.util.List;
 public class FirstController {
 
     @RequestMapping("/get-user")
-    public User testOne() {
+    public String testOne() {
+        String passTest = "sds";
         User example = new User();
         example.setUserName("Juan");
         example.setEmail("juansexy@gmail.com");
         example.setPassword("pipiribao");
-        return example;
+        return "erer";
     }
 
     @PostMapping("/create-user")
     public void createUser(@RequestBody User exampleBoy) throws IOException {
         System.out.println(exampleBoy.getPassword());
 
-        String path = "C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\src\\main\\java\\myDataBaseCE\\files\\test.json";
 
-        List<User> userList = new ArrayList<>();
-
-        try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
-            userList.add(exampleBoy);
-
-            Gson gson = new Gson();
-            gson.toJson(userList, out);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-//        Type listType = new TypeToken<ArrayList<User>>(){}.getType();
-//        List<User> userListTest = new Gson().fromJson(new FileReader(path), listType);
-//        System.out.println(userListTest.get(0).getUserName());
+//        String path = "C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\src\\main\\java\\myDataBaseCE\\files\\test.json";
+//
+//        List<User> userList = new ArrayList<>();
+//
+//        try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
+//            userList.add(exampleBoy);
+//
+//            Gson gson = new Gson();
+//            gson.toJson(userList, out);
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+////        Type listType = new TypeToken<ArrayList<User>>(){}.getType();
+////        List<User> userListTest = new Gson().fromJson(new FileReader(path), listType);
+////        System.out.println(userListTest.get(0).getUserName());
     }
 
 
@@ -67,21 +69,14 @@ public class FirstController {
     public void sendCommit(@RequestBody Container arroz) throws IOException{
         System.out.println(arroz.getData());
     }
-    @RequestMapping("/testThree")
-    public ArrayList<ArrayList<String>>testing() {
-        /*
-        String[] jeje = {"Esteban","88888888","AAA"};
-        xmlStore.countRows("LeoGod");
-        xmlStore.insert("LeoGod",jeje);
-        String ay = "Hola"+"\n"+"pepe";
-        System.out.println(ay);
-        String[] siu = ay.split("\n");
-        System.out.println(siu[0]);
-         */
+    @GetMapping("/get-xml-data")
+    public ArrayList<ArrayList<String>>testing(@RequestParam String xmlName) {
+        System.out.println(xmlName);
         XMLStore xmlStore = new XMLStore();
-        return xmlStore.sendTable("LeoGod");
+        return xmlStore.sendTable(xmlName);
 
     }
+
     @RequestMapping("/strip")
     public void Strip (String strip) {
         XMLStore xmlStore = new XMLStore();
@@ -108,7 +103,6 @@ public class FirstController {
             }
         }
     }
-
 
     @RequestMapping("/get-xml")
     public String[][] getXmls() {
