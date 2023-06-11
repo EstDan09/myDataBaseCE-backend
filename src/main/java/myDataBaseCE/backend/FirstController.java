@@ -65,6 +65,7 @@ public class FirstController {
         return xmlStore.findFoldersInDirectory();
     }
 
+
     @PostMapping("/send-commit")
     public void sendCommit(@RequestBody Container arroz) throws IOException{
         System.out.println(arroz.getData());
@@ -80,7 +81,7 @@ public class FirstController {
     @RequestMapping("/strip")
     public void Strip (String strip) {
         XMLStore xmlStore = new XMLStore();
-        String[] functions = strip.split("\n");
+        String[] functions = container.getData().split("\n");
         String[] jeje = {"HOla"};
         for (int i = 0; i < functions.length; i++) {
             String[] function = functions[i].split("/");
@@ -89,6 +90,7 @@ public class FirstController {
                 xmlStore.createXML(function[1], atributos);
             } else if (Objects.equals(function[0], "Insert")) {
                 String[] values = function[2].split(",");
+                xmlStore.countRows(function[1]);
                 xmlStore.insert(function[1], values);
             } else if (Objects.equals(function[0], "Update")) {
                 String[] newAttributes = function[4].split(",");
@@ -96,12 +98,32 @@ public class FirstController {
                 xmlStore.update(function[1], function[2], function[3], newAttributes, newRows);
             } else if (Objects.equals(function[0], "InnerJoin")) {
                 String[] newRows = function[5].split(",");
-                xmlStore.innerJoin(function[1], function[2], function[3], function[4], newRows, jeje);
+                String[] attribute1 = function[3].split(",");
+                String[] attribute2 = function[4].split(",");
+                String[] conditionals = function[5].split(",");
+                xmlStore.innerJoin(function[1], function[2], attribute1, attribute2, newRows, conditionals);
             } else if (Objects.equals(function[0], "Select")) {
                 String[] newAttributes = function[2].split(",");
                 xmlStore.select(function[1], newAttributes, function[3], function[4], jeje);
-            }
+            } else if(Objects.equals(function[0], "Delete"));
+                if (function.length==2){
+                    xmlStore.deleteSupreme(function[1]);
+                }
+                else{
+                    xmlStore.delete(function[1],function[2],function[3]);
+                }
         }
+    }
+    @PostMapping("/testFour")
+    public void testing2() {
+        XMLStore xmlStore = new XMLStore();
+        String[] attribute1 = {"Hola","Nou"};
+        String[] attribute2 = {"Hola","Siu"};
+        String[] attributes = {"LeoGodness.Hola","LeoGod.Siu"};
+        String[] conditionals= {"||"};
+
+        xmlStore.innerJoin("LeoGodness","LeoGod", attribute1, attribute2,attributes,conditionals);
+
     }
 
     @RequestMapping("/get-xml")

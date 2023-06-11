@@ -1,3 +1,5 @@
+
+
 package myDataBaseCE.backend;
 
 import java.io.*;
@@ -9,7 +11,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -28,13 +29,7 @@ public class XMLStore {
     XMLStore next;
 
 
-    private int numColums;
-
     private int numRows;
-
-    public XMLStore getNext() {
-        return next;
-    }
 
     public void setNext(XMLStore next) {
         this.next = next;
@@ -52,7 +47,6 @@ public class XMLStore {
             for (String attribute : attributes) {
                 Element newCol = document.createElement(attribute);
                 root.appendChild(newCol);
-                numColums++;
 
             }
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -79,13 +73,11 @@ public class XMLStore {
 
             NodeList xml = document.getElementsByTagName(name);
             NodeList attributes = xml.item(0).getChildNodes();
-            System.out.println(attributes.getLength());
-            System.out.println(newValues.length);
+
             int counter = 0;
             for (int v = 0; v < attributes.getLength() && counter < newValues.length; v++) {
                 Node attribute = attributes.item(v);
                 if (attribute.getNodeType() == Node.ELEMENT_NODE) {
-                    System.out.println("Lets see");
                     Element nData = document.createElement("X" + numRows);
 
                     nData.appendChild(document.createTextNode(newValues[counter]));
@@ -263,14 +255,12 @@ public class XMLStore {
         }
     }
 
-    public void innerJoin(String initialT, String secondT, String attribute1, String attribute2,String[] attributes, String[] conditionals) {
+    public void innerJoin(String initialT, String secondT, String[] attribute1, String[] attribute2,String[] attributes, String[] conditionals) {
         try {
             //ArrayList<ArrayList<String>> nRows;
-            System.out.println(getComAttJ(initialT, secondT, attribute1, attribute2));
-            System.out.println(equalsJ(getComAttJ(initialT, secondT, attribute1, attribute2)));
-            if (equalsJ(getComAttJ(initialT, secondT, attribute1, attribute2))) {
+
+            if (checkConditionalsJ(initialT,secondT,attribute1,attribute2,conditionals)) {
                 //nRows = extractRowsJ(attributtes);
-                //System.out.println(nRows);
                 numRows = 0;
                 createTemporalJ(attributes, extractRowsJ(attributes));
             }
@@ -278,11 +268,77 @@ public class XMLStore {
             throw new RuntimeException(e);
         }
     }
+    public boolean checkConditionalsJ(String initialT, String secondT, String[] attribute1, String[] attribute2, String[] conditionals){
+        if(attribute1.length==1 && attribute2.length==1){
+            return equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0]));
+        }
+        else if(attribute1.length==2 && attribute2.length==2 && conditionals.length==1){
+            if(Objects.equals(conditionals[0], "&&")){
+                if(equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) && equalsJ(getComAttJ(initialT, secondT, attribute1[1], attribute2[1]))){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else if(Objects.equals(conditionals[0], "||")){
+                if (equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) || equalsJ(getComAttJ(initialT, secondT, attribute1[1], attribute2[1]))){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        else if(attribute1.length==3 && attribute2.length==3 && conditionals.length==2){
+            if(Objects.equals(conditionals[0], "&&") && Objects.equals(conditionals[1], "&&")){
+                if(equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) && equalsJ(getComAttJ(initialT, secondT, attribute1[1],
+                        attribute2[1])) && equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else if(Objects.equals(conditionals[0], "||") && Objects.equals(conditionals[1], "||")){
+                if(equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) || equalsJ(getComAttJ(initialT, secondT, attribute1[1],
+                        attribute2[1])) || equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else if(Objects.equals(conditionals[0], "&&") && Objects.equals(conditionals[1], "||")){
+                if(equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) && equalsJ(getComAttJ(initialT, secondT, attribute1[1],
+                        attribute2[1])) || equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else if(Objects.equals(conditionals[0], "||") && Objects.equals(conditionals[1], "&&")){
+                if(equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) || equalsJ(getComAttJ(initialT, secondT, attribute1[1],
+                        attribute2[1])) && equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        return false;
+    }
 
     public ArrayList<ArrayList<String>> getComAttJ(String initialT, String secondT, String attribute1, String attribute2) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>(2);
-        ArrayList<String> array = new ArrayList<>();
-
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         try (InputStream is = new FileInputStream(".//XMLFolder//" + initialT + "//" + initialT + ".xml")) {
 
@@ -363,7 +419,6 @@ public class XMLStore {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 
         for (int i = 0; i < oldAttributes.length; i++) {
-            System.out.println("Entré");
             String[] oldAttribute = oldAttributes[i].split("\\.");
             maze.add(new ArrayList<>());
             try (InputStream is = new FileInputStream(".//XMLFolder//" + oldAttribute[0] + "//" + oldAttribute[0] + ".xml")) {
@@ -555,7 +610,6 @@ public class XMLStore {
 
     public void countRows(String name) {
         numRows = 0;
-        ArrayList<ArrayList<String>> maze = new ArrayList<>();
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
             DocumentBuilder db = documentFactory.newDocumentBuilder();
@@ -611,3 +665,4 @@ public class XMLStore {
         return maze;
     }
 }
+
