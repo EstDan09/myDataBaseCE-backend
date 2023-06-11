@@ -8,5 +8,9 @@ public class Container {
         this.data = data;
     }
 
+    public String getData(){
+        return data;
+    }
+
 }
 
