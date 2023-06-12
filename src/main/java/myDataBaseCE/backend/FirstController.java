@@ -115,7 +115,7 @@ public class FirstController {
                 xmlStore.createXML(function[1], atributos);
             }
             else if(Objects.equals(function[0], "Delete")){
-                if(function[0].length()==2){
+                if(function.length==2){
                     xmlStore.deleteSupreme(function[1]);
                 }
                 else{
@@ -128,20 +128,23 @@ public class FirstController {
                 xmlStore.insert(function[1], values);
             }
             else if (Objects.equals(function[0], "Update")) {
-                String[] newAttributes = function[4].split(",");
-                String[] newRows = function[5].split(",");
-                xmlStore.update(function[1], function[2], function[3], newAttributes, newRows);
+                if(function.length==6) {
+                    String[] newAttributes = function[4].split(",");
+                    String[] newRows = function[5].split(",");
+                    xmlStore.update(function[1], function[2], function[3], newAttributes, newRows);
+                }
+                else{
+                    String[] newAttributes = function[2].split(",");
+                    String[] newValues = function[3].split(",");
+                    xmlStore.updateChafa(function[1],newAttributes,newValues);
+                }
             }
             else if (Objects.equals(function[0], "InnerJoin")) {
 
                 String[] attribute1 = function[3].split(",");
-                System.out.println(attribute1[0]);
                 String[] attribute2 = function[4].split(",");
-                System.out.println(attribute2[0]);
                 String[] newRows = function[5].split(",");
-                System.out.println(newRows[0]);
                 String[] conditionals = function[6].split(",");
-                System.out.println(conditionals[0]);
                 xmlStore.innerJoin(function[1], function[2], attribute1, attribute2, newRows, conditionals);
             }
             else if (Objects.equals(function[0], "Select")) {
@@ -155,12 +158,10 @@ public class FirstController {
     @PostMapping("/testFour")
     public void testing2() {
         XMLStore xmlStore = new XMLStore();
-        String[] attribute1 = {"Hola","Nou"};
-        String[] attribute2 = {"Hola","Siu"};
-        String[] attributes = {"LeoGodness.Hola","LeoGod.Siu"};
-        String[] conditionals= {"||"};
+        String[] attributes = {"Hola","Siu"};
+        String[] newValues = {"Por", "favor"};
 
-        xmlStore.innerJoin("LeoGodness","LeoGod", attribute1, attribute2,attributes,conditionals);
+        xmlStore.updateChafa("LeoGod",attributes,newValues);
 
     }
 
