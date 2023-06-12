@@ -17,14 +17,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
-
 
 
 @RestController
@@ -33,32 +28,81 @@ public class FirstController {
 
     @GetMapping("/get-user")
     public List<String> testOne(@RequestParam String look) throws IOException {
-        File file = new File(
-                "C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\Users\\users.txt");
-
-        BufferedReader br
-                = new BufferedReader(new FileReader(file));
-
-        String st;
-
         String response = "wait";
+        String ard = "arduinando";
+        if (Objects.equals(look, ard)){
+            System.out.println("hay");
 
-        while ((st = br.readLine()) != null) {
-            System.out.println(st);
-            String[] listo = st.split(",");
-            System.out.println(listo[0]);
+            String pass = SerialCommunication.recibirDato();
+            System.out.println(pass);
 
-            if (Arrays.stream(listo).toList().contains(look)){
-                response = "yes";
+            pass = HuffmanEncoder.compress(pass);
+
+            File file = new File(
+                    "C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\Users\\users.txt");
+
+            BufferedReader br
+                    = new BufferedReader(new FileReader(file));
+
+            String st;
+
+
+
+            while ((st = br.readLine()) != null) {
+                System.out.println(st);
+                String[] listo = st.split(",");
+                System.out.println(listo[0]);
+
+                if (Arrays.stream(listo).toList().contains(pass)){
+                    SerialCommunication.enviarDato("1");
+                    response = "yes";
+                }
+
+                else {
+                    SerialCommunication.enviarDato("2");
+                    response = "no";
+                }
+
             }
 
-            else {
-                response = "no";
-            }
+
 
         }
-        System.out.println(response);
 
+        else{
+            File file = new File(
+                    "C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\Users\\users.txt");
+
+            BufferedReader br
+                    = new BufferedReader(new FileReader(file));
+
+            String st;
+
+
+            look = HuffmanEncoder.compress(look);
+
+            while ((st = br.readLine()) != null) {
+                System.out.println(st);
+                String[] listo = st.split(",");
+                System.out.println(listo[0]);
+
+                if (Arrays.stream(listo).toList().contains(look)){
+                    SerialCommunication.enviarDato("1");
+                    response = "yes";
+                }
+
+                else {
+                    SerialCommunication.enviarDato("2");
+                    response = "no";
+                }
+
+            }
+            System.out.println(response);
+
+
+            List<String> res = List.of(new String[]{response});
+            return res;
+        }
         List<String> res = List.of(new String[]{response});
         return res;
     }
@@ -67,13 +111,15 @@ public class FirstController {
     public void createUser(@RequestBody User exampleBoy) throws IOException {
         System.out.println(exampleBoy.getPassword());
 
-        String save = exampleBoy.getUserName()+exampleBoy.getPassword();
+        String save = exampleBoy.getPassword();
+        String saveHuff = HuffmanEncoder.compress(save);
+
 
         System.out.println(save);
         try{
             File path = new File("C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\Users\\users.txt");
             FileWriter wr = new FileWriter(path, true);
-            wr.append(save);
+            wr.append(saveHuff);
             wr.append(',');
             wr.flush();
             wr.close();
@@ -117,8 +163,9 @@ public class FirstController {
                 xmlStore.createXML(function[1], atributos);
             }
             else if(Objects.equals(function[0], "Delete")){
-                if(function[0].length()==2){
+                if(function.length==2){
                     xmlStore.deleteSupreme(function[1]);
+                    SerialCommunication.enviarDato("3");
                 }
                 else{
                     xmlStore.delete(function[1],function[2],function[3]);
