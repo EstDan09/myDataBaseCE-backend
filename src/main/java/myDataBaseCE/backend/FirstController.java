@@ -32,7 +32,7 @@ import java.util.List;
 public class FirstController {
 
     @GetMapping("/get-user")
-    public String testOne(@RequestParam String look) throws IOException {
+    public List<String> testOne(@RequestParam String look) throws IOException {
         File file = new File(
                 "C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\Users\\users.txt");
 
@@ -57,8 +57,10 @@ public class FirstController {
             }
 
         }
-        System.out.println("out");
-        return response;
+        System.out.println(response);
+
+        List<String> res = List.of(new String[]{response});
+        return res;
     }
 
     @PostMapping("/create-user")
