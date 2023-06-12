@@ -28,7 +28,9 @@ public class XMLStore {
 
     XMLStore next;
 
-
+    /**
+     * Entero que representa el número de columnas de una tabla.
+     */
     private int numRows;
 
     public void setNext(XMLStore next) {
@@ -37,11 +39,12 @@ public class XMLStore {
 
     /**
      * Función para crear un nuevo XML
-     * @param name nombre del XML
+     *
+     * @param name       nombre del XML
      * @param attributes columnas del XML
      */
     public void createXML(String name, String[] attributes) {
-        numRows =0;
+        numRows = 0;
         try {
             DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
@@ -70,7 +73,8 @@ public class XMLStore {
 
     /**
      * Función para insertar datos a un XML
-     * @param name name nombre del XML que voy a modificar
+     *
+     * @param name      name nombre del XML que voy a modificar
      * @param newValues nuevos valores que voy a agregar
      */
     void insert(String name, String[] newValues) {
@@ -117,6 +121,7 @@ public class XMLStore {
 
     /**
      * Función para eliminar todo un XML
+     *
      * @param name nombre del XML
      */
     public void deleteSupreme(String name) {
@@ -142,7 +147,8 @@ public class XMLStore {
 
     /**
      * Función para buscar el valor a eliminar de un XML
-     * @param name nombre del XML
+     *
+     * @param name  nombre del XML
      * @param Colum columna del xml
      * @param value valor a eliminar
      * @return id ubicación de lo que se desea eliminar
@@ -184,7 +190,8 @@ public class XMLStore {
 
     /**
      * Función para eliminar um dato de un XML
-     * @param name nombre del XML
+     *
+     * @param name  nombre del XML
      * @param Colum columna del xml
      * @param value valor a eliminar
      */
@@ -227,19 +234,10 @@ public class XMLStore {
             throw new RuntimeException(e);
         }
     }
-
-    /**
-     * Función para buscar las columnas a eliminar de un XML
-     * @param name nombre del XML
-     * @param Colum columna del xml
-     * @param value valor a eliminar
-     * @param columns
-     * @param newValues
-     */
-    public void update(String name, String Colum, String value, String[] columns, String[] newValues) {
+    public ArrayList<String> searchIDP(String name, String Colum, String value) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        String id = searchID(name, Colum, value);
-        int counter = 0;
+        //String id = "";
+        ArrayList<String> array = new ArrayList<>();
         try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
             DocumentBuilder db = documentFactory.newDocumentBuilder();
 
@@ -248,32 +246,76 @@ public class XMLStore {
             NodeList xml = document.getElementsByTagName(name);
             NodeList attributes = xml.item(0).getChildNodes();
             for (int i = 0; i < attributes.getLength(); i++) {
-                if (counter >= columns.length) {
-                    break;
-                }
                 Node attribute = attributes.item(i);
                 if (attribute.getNodeType() == Node.ELEMENT_NODE) {
-                    for (int j = 0; j < columns.length; j++) {
-                        if (attribute.getNodeName().equals(columns[j])) {
-                            NodeList rows = attribute.getChildNodes();
-                            for (int z = 0; z < rows.getLength(); z++) {
-                                Node row = rows.item(z);
-                                if (attribute.getNodeType() == Node.ELEMENT_NODE) {
-                                    if (row.getNodeName().equals(id)) {
-                                        row.setTextContent(newValues[j]);
-                                        //attribute.removeChild(row);
-                                        //Element nData = document.createElement(id);
-                                        //nData.appendChild(document.createTextNode(newValues[j]));
-                                        //attribute.appendChild(nData);
-                                    }
+                    if (attribute.getNodeName().equals(Colum)) {
+                        NodeList rows = attribute.getChildNodes();
+                        for (int j = 0; j < rows.getLength(); j++) {
+                            Node row = rows.item(j);
+                            if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                                if (Objects.equals(row.getTextContent(), value)) {
+                                    array.add(row.getNodeName());
+
                                 }
                             }
-                            counter++;
                         }
                     }
 
                 }
             }
+
+            return array;
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /**
+     * Método que es equivalente a un Update de SQL.
+     *
+     * @param name      nombre del XML.
+     * @param Colum     Columna donde se evalua la condición.
+     * @param value     Fila específica a evaluar.
+     * @param columns   Columnas a las que se le harán cambios.
+     * @param newValues Nuevos valores para la respectiva columna.
+     */
+    public void update(String name, String Colum, String value, String[] columns, String[] newValues) {
+        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+        ArrayList<String> id = searchIDP(name, Colum, value);
+        int counter = 0;
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
+            DocumentBuilder db = documentFactory.newDocumentBuilder();
+
+            Document document = db.parse(is);
+
+            NodeList xml = document.getElementsByTagName(name);
+            NodeList attributes = xml.item(0).getChildNodes();
+            for(int w = 0; w<id.size();w++) {
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    Node attribute = attributes.item(i);
+                    if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                        for (int j = 0; j < columns.length; j++) {
+                            if (attribute.getNodeName().equals(columns[j])) {
+                                NodeList rows = attribute.getChildNodes();
+                                for (int z = 0; z < rows.getLength(); z++) {
+                                    Node row = rows.item(z);
+                                    if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                                        if (row.getNodeName().equals(id.get(w))) {
+                                            row.setTextContent(newValues[j]);
+                                            //attribute.removeChild(row);
+                                            //Element nData = document.createElement(id);
+                                            //nData.appendChild(document.createTextNode(newValues[j]));
+                                            //attribute.appendChild(nData);
+                                        }
+                                    }
+                                }
+                                //counter++;
+                            }
+                        }
+
+                    }
+                }
+            }
+
             try (FileOutputStream output =
                          new FileOutputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -291,18 +333,20 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param initialT
-     * @param secondT
-     * @param attribute1
-     * @param attribute2
-     * @param attributes
+     * Método que busca unir columnas de dos tablas diferentes
+     *
+     * @param initialT     Primera tabla para la unión.
+     * @param secondT      Segunda tabla para la unión.
+     * @param attribute1   Lista de columnas de la tabla 1 que serán comparadas con las de la otra de tabla.
+     * @param attribute2   Lista de columnas de la tabla 2 que serán comparadas con las de la otra de tabla.
+     * @param attributes   Columnas que formarán parte de la nueva tabla.
+     * @param conditionals Condicionales necesarios a la hora de realizar las comparaciones de attribute 1 y 2.
      */
-    public void innerJoin(String initialT, String secondT, String[] attribute1, String[] attribute2,String[] attributes, String[] conditionals) {
+    public void innerJoin(String initialT, String secondT, String[] attribute1, String[] attribute2, String[] attributes, String[] conditionals) {
         try {
             //ArrayList<ArrayList<String>> nRows;
 
-            if (checkConditionalsJ(initialT,secondT,attribute1,attribute2,conditionals)) {
+            if (checkConditionalsJ(initialT, secondT, attribute1, attribute2, conditionals)) {
                 //nRows = extractRowsJ(attributtes);
                 numRows = 0;
                 createTemporalJ(attributes, extractRowsJ(attributes));
@@ -313,77 +357,64 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param initialT
-     * @param secondT
-     * @param attribute1
-     * @param attribute2
-     * @param conditionals
-     * @return              poner que se devuelve
+     * Método que verifica si se están cumpliendo los condicionales.
+     *
+     * @param initialT     Primera tabla para la unión.
+     * @param secondT      Segunda tabla para la unión.
+     * @param attribute1   Lista de columnas de la tabla 1 que serán comparadas con las de la otra de tabla.
+     * @param attribute2   Lista de columnas de la tabla 2 que serán comparadas con las de la otra de tabla.
+     * @param conditionals Condicionales necesarios a la hora de realizar las comparaciones de attribute 1 y 2.
+     * @return Un buleano dependiendo de las condiciones dadads.
      */
-    public boolean checkConditionalsJ(String initialT, String secondT, String[] attribute1, String[] attribute2, String[] conditionals){
-        if(attribute1.length==1 && attribute2.length==1){
+    public boolean checkConditionalsJ(String initialT, String secondT, String[] attribute1, String[] attribute2, String[] conditionals) {
+        if (attribute1.length == 1 && attribute2.length == 1) {
             return equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0]));
-        }
-        else if(attribute1.length==2 && attribute2.length==2 && conditionals.length==1){
-            if(Objects.equals(conditionals[0], "&&")){
-                if(equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) && equalsJ(getComAttJ(initialT, secondT, attribute1[1], attribute2[1]))){
+        } else if (attribute1.length == 2 && attribute2.length == 2 && conditionals.length == 1) {
+            if (Objects.equals(conditionals[0], "&&")) {
+                if (equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) && equalsJ(getComAttJ(initialT, secondT, attribute1[1], attribute2[1]))) {
                     return true;
-                }
-                else{
+                } else {
                     return false;
                 }
-            }
-            else if(Objects.equals(conditionals[0], "||")){
-                if (equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) || equalsJ(getComAttJ(initialT, secondT, attribute1[1], attribute2[1]))){
+            } else if (Objects.equals(conditionals[0], "||")) {
+                if (equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) || equalsJ(getComAttJ(initialT, secondT, attribute1[1], attribute2[1]))) {
                     return true;
-                }
-                else{
+                } else {
                     return false;
                 }
-            }
-            else{
+            } else {
                 return false;
             }
-        }
-        else if(attribute1.length==3 && attribute2.length==3 && conditionals.length==2){
-            if(Objects.equals(conditionals[0], "&&") && Objects.equals(conditionals[1], "&&")){
-                if(equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) && equalsJ(getComAttJ(initialT, secondT, attribute1[1],
-                        attribute2[1])) && equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))){
+        } else if (attribute1.length == 3 && attribute2.length == 3 && conditionals.length == 2) {
+            if (Objects.equals(conditionals[0], "&&") && Objects.equals(conditionals[1], "&&")) {
+                if (equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) && equalsJ(getComAttJ(initialT, secondT, attribute1[1],
+                        attribute2[1])) && equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))) {
                     return true;
-                }
-                else{
+                } else {
                     return false;
                 }
-            }
-            else if(Objects.equals(conditionals[0], "||") && Objects.equals(conditionals[1], "||")){
-                if(equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) || equalsJ(getComAttJ(initialT, secondT, attribute1[1],
-                        attribute2[1])) || equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))){
+            } else if (Objects.equals(conditionals[0], "||") && Objects.equals(conditionals[1], "||")) {
+                if (equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) || equalsJ(getComAttJ(initialT, secondT, attribute1[1],
+                        attribute2[1])) || equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))) {
                     return true;
-                }
-                else{
+                } else {
                     return false;
                 }
-            }
-            else if(Objects.equals(conditionals[0], "&&") && Objects.equals(conditionals[1], "||")){
-                if(equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) && equalsJ(getComAttJ(initialT, secondT, attribute1[1],
-                        attribute2[1])) || equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))){
+            } else if (Objects.equals(conditionals[0], "&&") && Objects.equals(conditionals[1], "||")) {
+                if (equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) && equalsJ(getComAttJ(initialT, secondT, attribute1[1],
+                        attribute2[1])) || equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))) {
                     return true;
-                }
-                else{
+                } else {
                     return false;
                 }
-            }
-            else if(Objects.equals(conditionals[0], "||") && Objects.equals(conditionals[1], "&&")){
-                if(equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) || equalsJ(getComAttJ(initialT, secondT, attribute1[1],
-                        attribute2[1])) && equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))){
+            } else if (Objects.equals(conditionals[0], "||") && Objects.equals(conditionals[1], "&&")) {
+                if (equalsJ(getComAttJ(initialT, secondT, attribute1[0], attribute2[0])) || equalsJ(getComAttJ(initialT, secondT, attribute1[1],
+                        attribute2[1])) && equalsJ(getComAttJ(initialT, secondT, attribute1[2], attribute2[2]))) {
                     return true;
-                }
-                else{
+                } else {
                     return false;
                 }
-            }
-            else{
+            } else {
                 return false;
             }
         }
@@ -391,12 +422,13 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param initialT
-     * @param secondT
-     * @param attribute1
-     * @param attribute2
-     * @return      poner aqui que devuelve
+     * Método que obtiene las filas que serán comparadas
+     *
+     * @param initialT   Primera tabla para la unión.
+     * @param secondT    Segunda tabla para la unión.
+     * @param attribute1 Lista de columnas de la tabla 1 que serán comparadas con las de la otra de tabla.
+     * @param attribute2 Lista de columnas de la tabla 2 que serán comparadas con las de la otra de tabla.
+     * @return Una matriz de arryas que contiene los dos conjuntos de filas que serán comparados.
      */
     public ArrayList<ArrayList<String>> getComAttJ(String initialT, String secondT, String attribute1, String attribute2) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>(2);
@@ -463,9 +495,10 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param maze
-     * @return      poner aqui que devuelve
+     * Método que verifica si los conjuntos de filas son iguales.
+     *
+     * @param maze Matriz que contiene los dos conjuntos de filas a comparar.
+     * @return Un buleano.
      */
     public boolean equalsJ(ArrayList<ArrayList<String>> maze) {
 
@@ -481,9 +514,10 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param oldAttributes
-     * @return      poner aqui que devuelve
+     * Método que obtiene las filas de la nueva tabla.
+     *
+     * @param oldAttributes Columnas que deben ser sacados de las tablas.
+     * @return Matriz de arrays que contiene las filas de la nueva tabla.
      */
     public ArrayList<ArrayList<String>> extractRowsJ(String[] oldAttributes) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>();
@@ -521,10 +555,10 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param attributes
-     * @param maze
-     * @return      poner aqui que devuelve
+     * Método que crea una tabla temporal resultado del InnerJoin
+     *
+     * @param attributes Atributos que llevará la tabla.
+     * @param maze       Matriz que lleva todas las filas de la nueva tabla
      */
     public void createTemporalJ(String[] attributes, ArrayList<ArrayList<String>> maze) throws TransformerException, ParserConfigurationException {
 
@@ -563,11 +597,13 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param name
-     * @param attributes
-     * @param attributeC
-     * @param conditionals
+     * Método que despliega una nueva tabla a partir de una tabla dada siguiendo ciertas especificaciones.
+     *
+     * @param name         Nombre de la tabla donde se evaluarán los datos.
+     * @param attributes   Columnas que llevará la nueva tabla.
+     * @param attributeC   Columna en donde se realizará la evaluación
+     * @param rowC         Valor a evaluar.
+     * @param conditionals Condicionales como el && y el ||.
      */
     public void select(String name, String[] attributes, String attributeC, String rowC, String[] conditionals) {
         numRows = 0;
@@ -575,11 +611,12 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param name
-     * @param attributeC
-     * @param rowC
-     * @return maze     poner aqui que devuelve
+     * Método que recoge las columnas que cumplen con las condiciones.
+     *
+     * @param name       Nombre de la tabla donde se evaluarán los datos.
+     * @param attributeC Columna en donde se realizará la evaluación
+     * @param rowC       Valor a evaluar.
+     * @return Arreglo de columnas que cumplen con las condiciones.
      */
     public ArrayList<String> collectRowsS(String name, String attributeC, String rowC) {
         ArrayList<String> maze = new ArrayList<>();
@@ -613,11 +650,12 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param name
-     * @param oldAttributes
-     * @param oldRows
-     * @return maze     poner aqui que devuelve
+     * Método que recoge el conjunto de filas a partir de las columnas obtenidas por collectRowsS.
+     *
+     * @param name          Nombre de la tabla donde se evaluarán los datos.
+     * @param oldAttributes Columnas que llevará la nueva tabla.
+     * @param oldRows       Columnas obtenidas de collectRowsS.
+     * @return Matriz que contiene la nueva tabla.
      */
     public ArrayList<ArrayList<String>> getMazeS(String name, String[] oldAttributes, ArrayList<String> oldRows) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>();
@@ -656,8 +694,9 @@ public class XMLStore {
     }
 
     /**
-     * Función para buscar las columnas a eliminar de un XML
-     * @param maze
+     * Método que crea la nueva tabla
+     *
+     * @param maze Matriz que contiene todas las filas y columnas.
      */
     public void createTemporalTS(ArrayList<ArrayList<String>> maze) {
         try {
@@ -694,8 +733,9 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @return foldersInDirectory  poner aqui que devuelve
+     * Método que lee todas las tablas que se encuentran en la compu.
+     *
+     * @return Tablas que se encuentran en la compu.
      */
     public List<String> findFoldersInDirectory() {
         File directory = new File(".//XMLFolder//");
@@ -716,8 +756,9 @@ public class XMLStore {
     }
 
     /**
-     * Función para contar columnas
-     * @param name
+     * Método para contar columnas de una tabla en específico.
+     *
+     * @param name Nombre de la tabla
      */
     public void countRows(String name) {
         numRows = 0;
@@ -747,11 +788,12 @@ public class XMLStore {
     }
 
     /**
-     * Función para buscar las columnas a eliminar de un XML
-     * @param name
-     * @return maze poner aqui que devuelve
+     * Método que pasa la info de un xml a una Matriz de arreglos
+     *
+     * @param name Nombre de la tabla.
+     * @return Matriz con toda la info de la tabla.
      */
-    public ArrayList<ArrayList<String>> sendTable(String name){
+    public ArrayList<ArrayList<String>> sendTable(String name) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>();
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
@@ -779,6 +821,50 @@ public class XMLStore {
             throw new RuntimeException(e);
         }
         return maze;
+    }
+
+    public void updateChafa(String name, String[] newRows, String[] newValues) {
+        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+
+            try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
+                DocumentBuilder db = documentFactory.newDocumentBuilder();
+                Document document = db.parse(is);
+                for(int j=0; j<newRows.length;j++) {
+                    NodeList xml = document.getElementsByTagName(name);
+                    NodeList attributes = xml.item(0).getChildNodes();
+                    boolean tester = false;
+                    for (int i = 0; i < attributes.getLength() && !tester; i++) {
+                        Node attribute = attributes.item(i);
+                        if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                            if(attribute.getNodeName().equals(newRows[j])) {
+                                NodeList rows = attribute.getChildNodes();
+                                for (int z = 0; z < rows.getLength(); z++) {
+                                    Node row = rows.item(z);
+                                    if (row.getNodeType() == Node.ELEMENT_NODE) {
+                                        row.setTextContent(newValues[j]);
+                                    }
+                                }
+                                tester = true;
+                            }
+                        }
+                    }
+                }
+
+            try (FileOutputStream output =
+                         new FileOutputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer = transformerFactory.newTransformer();
+                DOMSource source = new DOMSource(document);
+                StreamResult result = new StreamResult(output);
+                transformer.transform(source, result);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
