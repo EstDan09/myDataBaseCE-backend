@@ -28,7 +28,9 @@ public class XMLStore {
 
     XMLStore next;
 
-
+    /**
+     * Entero que representa el número de columnas de una tabla.
+     */
     private int numRows;
 
     public void setNext(XMLStore next) {
@@ -229,12 +231,12 @@ public class XMLStore {
     }
 
     /**
-     * Función para buscar las columnas a eliminar de un XML
-     * @param name nombre del XML
-     * @param Colum columna del xml
-     * @param value valor a eliminar
-     * @param columns
-     * @param newValues
+     * Método que es equivalente a un Update de SQL.
+     * @param name nombre del XML.
+     * @param Colum Columna donde se evalua la condición.
+     * @param value Fila específica a evaluar.
+     * @param columns Columnas a las que se le harán cambios.
+     * @param newValues Nuevos valores para la respectiva columna.
      */
     public void update(String name, String Colum, String value, String[] columns, String[] newValues) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -291,12 +293,13 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param initialT
-     * @param secondT
-     * @param attribute1
-     * @param attribute2
-     * @param attributes
+     * Método que busca unir columnas de dos tablas diferentes
+     * @param initialT Primera tabla para la unión.
+     * @param secondT Segunda tabla para la unión.
+     * @param attribute1 Lista de columnas de la tabla 1 que serán comparadas con las de la otra de tabla.
+     * @param attribute2 Lista de columnas de la tabla 2 que serán comparadas con las de la otra de tabla.
+     * @param attributes Columnas que formarán parte de la nueva tabla.
+     * @param conditionals Condicionales necesarios a la hora de realizar las comparaciones de attribute 1 y 2.
      */
     public void innerJoin(String initialT, String secondT, String[] attribute1, String[] attribute2,String[] attributes, String[] conditionals) {
         try {
@@ -313,13 +316,13 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param initialT
-     * @param secondT
-     * @param attribute1
-     * @param attribute2
-     * @param conditionals
-     * @return              poner que se devuelve
+     * Método que verifica si se están cumpliendo los condicionales.
+     * @param initialT Primera tabla para la unión.
+     * @param secondT Segunda tabla para la unión.
+     * @param attribute1 Lista de columnas de la tabla 1 que serán comparadas con las de la otra de tabla.
+     * @param attribute2 Lista de columnas de la tabla 2 que serán comparadas con las de la otra de tabla.
+     * @param conditionals Condicionales necesarios a la hora de realizar las comparaciones de attribute 1 y 2.
+     * @return Un buleano dependiendo de las condiciones dadads.
      */
     public boolean checkConditionalsJ(String initialT, String secondT, String[] attribute1, String[] attribute2, String[] conditionals){
         if(attribute1.length==1 && attribute2.length==1){
@@ -391,12 +394,12 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param initialT
-     * @param secondT
-     * @param attribute1
-     * @param attribute2
-     * @return      poner aqui que devuelve
+     * Método que obtiene las filas que serán comparadas
+     * @param initialT Primera tabla para la unión.
+     * @param secondT Segunda tabla para la unión.
+     * @param attribute1 Lista de columnas de la tabla 1 que serán comparadas con las de la otra de tabla.
+     * @param attribute2 Lista de columnas de la tabla 2 que serán comparadas con las de la otra de tabla.
+     * @return Una matriz de arryas que contiene los dos conjuntos de filas que serán comparados.
      */
     public ArrayList<ArrayList<String>> getComAttJ(String initialT, String secondT, String attribute1, String attribute2) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>(2);
@@ -463,9 +466,9 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param maze
-     * @return      poner aqui que devuelve
+     * Método que verifica si los conjuntos de filas son iguales.
+     * @param maze Matriz que contiene los dos conjuntos de filas a comparar.
+     * @return Un buleano.
      */
     public boolean equalsJ(ArrayList<ArrayList<String>> maze) {
 
@@ -481,9 +484,9 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param oldAttributes
-     * @return      poner aqui que devuelve
+     * Método que obtiene las filas de la nueva tabla.
+     * @param oldAttributes Columnas que deben ser sacados de las tablas.
+     * @return Matriz de arrays que contiene las filas de la nueva tabla.
      */
     public ArrayList<ArrayList<String>> extractRowsJ(String[] oldAttributes) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>();
@@ -521,10 +524,9 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param attributes
-     * @param maze
-     * @return      poner aqui que devuelve
+     * Método que crea una tabla temporal resultado del InnerJoin
+     * @param attributes Atributos que llevará la tabla.
+     * @param maze Matriz que lleva todas las filas de la nueva tabla
      */
     public void createTemporalJ(String[] attributes, ArrayList<ArrayList<String>> maze) throws TransformerException, ParserConfigurationException {
 
@@ -563,11 +565,12 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param name
-     * @param attributes
-     * @param attributeC
-     * @param conditionals
+     * Método que despliega una nueva tabla a partir de una tabla dada siguiendo ciertas especificaciones.
+     * @param name Nombre de la tabla donde se evaluarán los datos.
+     * @param attributes Columnas que llevará la nueva tabla.
+     * @param attributeC Columna en donde se realizará la evaluación
+     * @param rowC Valor a evaluar.
+     * @param conditionals Condicionales como el && y el ||.
      */
     public void select(String name, String[] attributes, String attributeC, String rowC, String[] conditionals) {
         numRows = 0;
@@ -575,11 +578,11 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param name
-     * @param attributeC
-     * @param rowC
-     * @return maze     poner aqui que devuelve
+     * Método que recoge las columnas que cumplen con las condiciones.
+     * @param name Nombre de la tabla donde se evaluarán los datos.
+     * @param attributeC Columna en donde se realizará la evaluación
+     * @param rowC Valor a evaluar.
+     * @return Arreglo de columnas que cumplen con las condiciones.
      */
     public ArrayList<String> collectRowsS(String name, String attributeC, String rowC) {
         ArrayList<String> maze = new ArrayList<>();
@@ -613,11 +616,11 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @param name
-     * @param oldAttributes
-     * @param oldRows
-     * @return maze     poner aqui que devuelve
+     * Método que recoge el conjunto de filas a partir de las columnas obtenidas por collectRowsS.
+     * @param name Nombre de la tabla donde se evaluarán los datos.
+     * @param oldAttributes Columnas que llevará la nueva tabla.
+     * @param oldRows Columnas obtenidas de collectRowsS.
+     * @return Matriz que contiene la nueva tabla.
      */
     public ArrayList<ArrayList<String>> getMazeS(String name, String[] oldAttributes, ArrayList<String> oldRows) {
         ArrayList<ArrayList<String>> maze = new ArrayList<>();
@@ -656,8 +659,8 @@ public class XMLStore {
     }
 
     /**
-     * Función para buscar las columnas a eliminar de un XML
-     * @param maze
+     * Método que crea la nueva tabla
+     * @param maze Matriz que contiene todas las filas y columnas.
      */
     public void createTemporalTS(ArrayList<ArrayList<String>> maze) {
         try {
@@ -694,8 +697,8 @@ public class XMLStore {
     }
 
     /**
-     * Función
-     * @return foldersInDirectory  poner aqui que devuelve
+     * Método que lee todas las tablas que se encuentran en la compu.
+     * @return Tablas que se encuentran en la compu.
      */
     public List<String> findFoldersInDirectory() {
         File directory = new File(".//XMLFolder//");
@@ -716,8 +719,8 @@ public class XMLStore {
     }
 
     /**
-     * Función para contar columnas
-     * @param name
+     * Método para contar columnas de una tabla en específico.
+     * @param name Nombre de la tabla
      */
     public void countRows(String name) {
         numRows = 0;
@@ -747,9 +750,9 @@ public class XMLStore {
     }
 
     /**
-     * Función para buscar las columnas a eliminar de un XML
-     * @param name
-     * @return maze poner aqui que devuelve
+     * Método que pasa la info de un xml a una Matriz de arreglos
+     * @param name Nombre de la tabla.
+     * @return Matriz con toda la info de la tabla.
      */
     public ArrayList<ArrayList<String>> sendTable(String name){
         ArrayList<ArrayList<String>> maze = new ArrayList<>();
