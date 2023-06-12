@@ -789,6 +789,12 @@ public class XMLStore {
         return maze;
     }
 
+    /**
+     * Método que cumple la misma función que el Update, pero en este caso no se aplican condiciones.
+     * @param name Nombre
+     * @param newRows
+     * @param newValues
+     */
     public void updateChafa(String name, String[] newRows, String[] newValues) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 
