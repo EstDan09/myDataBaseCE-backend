@@ -10,6 +10,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import java.io.*;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 import java.lang.reflect.Type;
@@ -23,37 +31,55 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FirstController {
 
-    @RequestMapping("/get-user")
-    public String testOne() {
-        String passTest = "sds";
-        User example = new User();
-        example.setUserName("Juan");
-        example.setEmail("juansexy@gmail.com");
-        example.setPassword("pipiribao");
-        return "erer";
+    @GetMapping("/get-user")
+    public String testOne(@RequestParam String look) throws IOException {
+        File file = new File(
+                "C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\Users\\users.txt");
+
+        BufferedReader br
+                = new BufferedReader(new FileReader(file));
+
+        String st;
+
+        String response = "wait";
+
+        while ((st = br.readLine()) != null) {
+            System.out.println(st);
+            String[] listo = st.split(",");
+            System.out.println(listo[0]);
+
+            if (Arrays.stream(listo).toList().contains(look)){
+                response = "yes";
+            }
+
+            else {
+                response = "no";
+            }
+
+        }
+        System.out.println("out");
+        return response;
     }
 
     @PostMapping("/create-user")
     public void createUser(@RequestBody User exampleBoy) throws IOException {
         System.out.println(exampleBoy.getPassword());
 
+        String save = exampleBoy.getUserName()+exampleBoy.getPassword();
 
-//        String path = "C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\src\\main\\java\\myDataBaseCE\\files\\test.json";
-//
-//        List<User> userList = new ArrayList<>();
-//
-//        try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
-//            userList.add(exampleBoy);
-//
-//            Gson gson = new Gson();
-//            gson.toJson(userList, out);
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
-////        Type listType = new TypeToken<ArrayList<User>>(){}.getType();
-////        List<User> userListTest = new Gson().fromJson(new FileReader(path), listType);
-////        System.out.println(userListTest.get(0).getUserName());
+        System.out.println(save);
+        try{
+            File path = new File("C:\\Users\\eseca\\Desktop\\Code\\Angular\\proyecto3datos2\\backend\\Users\\users.txt");
+            FileWriter wr = new FileWriter(path, true);
+            wr.append(save);
+            wr.append(',');
+            wr.flush();
+            wr.close();
+        }
+
+        catch (IOException ex) {
+            System.out.print("Invalid Path");
+        }
     }
 
     @RequestMapping("/get-tables")
