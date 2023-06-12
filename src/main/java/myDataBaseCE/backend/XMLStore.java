@@ -234,7 +234,41 @@ public class XMLStore {
             throw new RuntimeException(e);
         }
     }
+    public ArrayList<String> searchIDP(String name, String Colum, String value) {
+        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+        //String id = "";
+        ArrayList<String> array = new ArrayList<>();
+        try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
+            DocumentBuilder db = documentFactory.newDocumentBuilder();
 
+            Document document = db.parse(is);
+
+            NodeList xml = document.getElementsByTagName(name);
+            NodeList attributes = xml.item(0).getChildNodes();
+            for (int i = 0; i < attributes.getLength(); i++) {
+                Node attribute = attributes.item(i);
+                if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                    if (attribute.getNodeName().equals(Colum)) {
+                        NodeList rows = attribute.getChildNodes();
+                        for (int j = 0; j < rows.getLength(); j++) {
+                            Node row = rows.item(j);
+                            if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                                if (Objects.equals(row.getTextContent(), value)) {
+                                    array.add(row.getNodeName());
+
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            return array;
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new RuntimeException(e);
+        }
+    }
     /**
      * Método que es equivalente a un Update de SQL.
      *
@@ -246,7 +280,7 @@ public class XMLStore {
      */
     public void update(String name, String Colum, String value, String[] columns, String[] newValues) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        String id = searchID(name, Colum, value);
+        ArrayList<String> id = searchIDP(name, Colum, value);
         int counter = 0;
         try (InputStream is = new FileInputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
             DocumentBuilder db = documentFactory.newDocumentBuilder();
@@ -255,33 +289,33 @@ public class XMLStore {
 
             NodeList xml = document.getElementsByTagName(name);
             NodeList attributes = xml.item(0).getChildNodes();
-            for (int i = 0; i < attributes.getLength(); i++) {
-                if (counter >= columns.length) {
-                    break;
-                }
-                Node attribute = attributes.item(i);
-                if (attribute.getNodeType() == Node.ELEMENT_NODE) {
-                    for (int j = 0; j < columns.length; j++) {
-                        if (attribute.getNodeName().equals(columns[j])) {
-                            NodeList rows = attribute.getChildNodes();
-                            for (int z = 0; z < rows.getLength(); z++) {
-                                Node row = rows.item(z);
-                                if (attribute.getNodeType() == Node.ELEMENT_NODE) {
-                                    if (row.getNodeName().equals(id)) {
-                                        row.setTextContent(newValues[j]);
-                                        //attribute.removeChild(row);
-                                        //Element nData = document.createElement(id);
-                                        //nData.appendChild(document.createTextNode(newValues[j]));
-                                        //attribute.appendChild(nData);
+            for(int w = 0; w<id.size();w++) {
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    Node attribute = attributes.item(i);
+                    if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                        for (int j = 0; j < columns.length; j++) {
+                            if (attribute.getNodeName().equals(columns[j])) {
+                                NodeList rows = attribute.getChildNodes();
+                                for (int z = 0; z < rows.getLength(); z++) {
+                                    Node row = rows.item(z);
+                                    if (attribute.getNodeType() == Node.ELEMENT_NODE) {
+                                        if (row.getNodeName().equals(id.get(w))) {
+                                            row.setTextContent(newValues[j]);
+                                            //attribute.removeChild(row);
+                                            //Element nData = document.createElement(id);
+                                            //nData.appendChild(document.createTextNode(newValues[j]));
+                                            //attribute.appendChild(nData);
+                                        }
                                     }
                                 }
+                                //counter++;
                             }
-                            counter++;
                         }
-                    }
 
+                    }
                 }
             }
+
             try (FileOutputStream output =
                          new FileOutputStream(".//XMLFolder//" + name + "//" + name + ".xml")) {
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
