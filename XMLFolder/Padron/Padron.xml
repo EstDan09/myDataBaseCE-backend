@@ -1,14 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><Padron>
-    <Cedula>
-        
-    <X1>234780987</X1><X1>388974699</X1></Cedula>
-    <Nombre>
-        
-    <X1>Sebastian</X1><X1>Iturbide</X1></Nombre>
-    <Apellido>
-        
-    <X1>Secaida</X1><X1>Sancho</X1></Apellido>
-    <Numero>
-        
-    <X1>78895423</X1><X1>99093987</X1></Numero>
-</Padron>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Padron/>
